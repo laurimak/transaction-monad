@@ -53,14 +53,10 @@ public class SpringTransactorTest {
 
     @Test
     public void two_inserts_are_flatmapped_together() throws ClassNotFoundException, SQLException {
-        Transaction<Boolean> m1 = monad()
-                .map(() -> statementResult(s -> s.execute("insert into TEST values (1)")));
-
-        Transaction<Boolean> m2 = monad()
-                .map(() -> statementResult(s -> s.execute("insert into TEST values (1)")));
-
-        m1
-                .flatMap(b -> m2)
+        monad()
+                .map(() -> statementResult(s1 -> s1.execute("insert into TEST values (1)")))
+                .flatMap(b -> monad()
+                        .map(() -> statementResult(s2 -> s2.execute("insert into TEST values (1)"))))
                 .commit();
 
         assertThat(statementResult(s -> rowCount(s.executeQuery("select * from TEST"))), is(2));
@@ -82,9 +78,7 @@ public class SpringTransactorTest {
                 .map(() -> statementResult(s -> s.execute("insert into TEST values (1)")));
 
         Transaction<Boolean> transactionThatIsRolledback = monad()
-                .map(() ->
-                        statementResult(s -> s.execute("insert into TEST values (1)"))
-                );
+                .map(() -> statementResult(s -> s.execute("insert into TEST values (1)")));
 
         toThrown(() ->
                 transactionThatIsRolledback.flatMap(b -> transactionThatGetsCommitted)
