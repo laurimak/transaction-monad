@@ -9,7 +9,7 @@ Monadic(ish) transaction management in Java 8.
 * One could give up the service layer all together and build completely different architectures.
 
 ## Example and motivation
-In a typical three-layer Java webapp you write something like to following to perform two db operations in transaction.
+In a typical three-layer Java webapp you would write something like the following to perform two db operations in transaction.
 
 ```java
 //Service2.java
@@ -54,7 +54,7 @@ public class MyController {
 }
 ```
 
-In the "monadic" model you could do away with the dependency between `Service1` and `Service2` and combine the two operations into on transaction one the controller level.
+In the "monadic" model you could do away with the dependency between `Service1` and `Service2` and combine the two operations into one transaction on the controller level.
 
 ```java
 //Service2.java
